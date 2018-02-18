@@ -8,13 +8,25 @@ function GithubGameOfLife() {
     Array.from(col.querySelectorAll('rect'))
   )
   this.model = this.rectMatrix.map(col =>
-    col.map(rect => (rect.attributes.fill.value === colors[0] ? 0 : 1))
+    col.map(rect => colors.indexOf(rect.attributes.fill.value))
   )
+  this.initialModel = this.model
 }
 
-GithubGameOfLife.prototype.startGameLoop = function startGameLoop() {
+GithubGameOfLife.prototype.run = function run() {
+  if (this.interval) {
+    this.stop()
+  }
+
   this.tick()
   this.interval = setInterval(this.tick.bind(this), 1000)
+}
+
+GithubGameOfLife.prototype.stop = function stop() {
+  clearInterval(this.interval)
+  this.interval = 0
+  this.model = this.initialModel
+  this.tick()
 }
 
 GithubGameOfLife.prototype.tick = function tick() {
@@ -73,4 +85,8 @@ GithubGameOfLife.prototype.forEachCell = function forEachCell(cb) {
 }
 
 const game = new GithubGameOfLife()
-game.startGameLoop()
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.message === 'clicked_browser_action') {
+    game.run()
+  }
+})
