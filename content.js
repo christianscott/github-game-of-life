@@ -42,7 +42,13 @@ GithubGameOfLife.prototype.getNeighbourCount = function getNeighbourCount(
   let count = 0
   for (let i = colNum - 1; i <= colNum + 1; i++) {
     for (let j = rowNum - 1; j <= rowNum + 1; j++) {
-      const isValid = (0 < i) && (i < this.model.length) && (0 < j) && (j < this.model[i].length)
+      const isValid =
+        0 <= i &&
+        i < this.model.length &&
+        0 <= j &&
+        j < this.model[i].length &&
+        !(i === colNum && j === rowNum)
+
       if (isValid) {
         count += this.model[i][j] > 0 ? 1 : 0
       }
